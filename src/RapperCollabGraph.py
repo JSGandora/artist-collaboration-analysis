@@ -14,14 +14,16 @@ with open('rapper_names.json', 'w') as df:
 G = nx.Graph()
 Edges = []
 
-for x in range(1, 197):
+max_nodes = 50
+
+for x in range(1, max_nodes):
     with open('rapper_stats'+str(x)+'.json') as data_file:
         tracks = json.load(data_file)
     tracks_info = tracks[tracks.keys()[0]]
     for track in tracks_info:
         for x in range(len(track['artists'])):
             for y in range(x+1, len(track['artists'])):
-                if(track['artists'][x]['name'] in rapper_names and track['artists'][y]['name'] in rapper_names):
+                if(track['artists'][x]['name'] in rapper_names[:max_nodes] and track['artists'][y]['name'] in rapper_names[:max_nodes]):
                     G.add_edge(track['artists'][x]['name'], track['artists'][y]['name'])
 
 pos = nx.spring_layout(G)
