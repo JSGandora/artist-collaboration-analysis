@@ -62,7 +62,24 @@ trace = go.Scatter(
 
 data = [trace]
 
-# Plot and embed in ipython notebook!
-# py.iplot(data, filename='basic-scatter')
-
-plot_url = py.plot(data, filename='Percentage Collabs vs Popularity')
+layout = go.Layout(
+    title='Collaboration Rate vs. Artist Popularity',
+    xaxis=dict(
+        title='Artist Spotify Popularity',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='Collaboration Rate',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+plot_url = py.plot(fig, filename='Percentage Collabs vs Popularity')
