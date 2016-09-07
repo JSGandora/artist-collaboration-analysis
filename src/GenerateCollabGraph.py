@@ -7,18 +7,18 @@ import requests
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# Use the Spotify API to retrieve all the albums of the artist in question
+# use the Spotify API to retrieve all the albums of the artist in question
 parameters = {'q': 'Starrah', 'type': 'artist'}
 search = requests.get('https://api.spotify.com/v1/search', params=parameters)
 id = search.json()['artists']['items'][0]['id']
 name = search.json()['artists']['items'][0]['name']
 artist_albums = requests.get('https://api.spotify.com/v1/artists/' + id + '/albums')
 
-# Initialize the collaboration graph
+# initialize the collaboration graph
 G = nx.Graph()
 Edges = []
 
-# Set the minimum popularity (as defined by Spotify's popularity metric) for artists to be included in the graph
+# set the minimum popularity (as defined by Spotify's popularity metric) for artists to be included in the graph
 min_popularity = search.json()['artists']['items'][0]['popularity'] - 10
 
 # code to iterate through the songs of the artist in question
@@ -49,7 +49,7 @@ while not current_page == 'none':
     else:
         current_page = 'none'
 
-# Draw the Graph
+# draw the Graph
 pos = nx.spring_layout(G)
 # nodes
 nx.draw_networkx_nodes(G,pos,node_size=700)

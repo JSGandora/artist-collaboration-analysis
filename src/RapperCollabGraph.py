@@ -1,19 +1,24 @@
+'''
+The following code generates the collaboration graph of all the rappers in our target list and plots the distribution
+of degrees of the collaboration graph.
+'''
+
 import networkx as nx
 import matplotlib.pyplot as plt
-
 import json
 
+# load the rapper names fron json file
 with open('rapper_names.json') as data_file:
     rapper_names = json.load(data_file)
 
-with open('rapper_names.json', 'w') as df:
-    json.dump(rapper_names, df)
-
+# initialize our graph
 G = nx.Graph()
 Edges = []
 
 max_nodes = 197
 
+# iterate through all the rappers in the list and update the graph with collaborators gathered from their
+# respective json files
 for x in range(1, max_nodes):
     with open('rapper_stats'+str(x)+'.json') as data_file:
         tracks = json.load(data_file)
@@ -24,34 +29,27 @@ for x in range(1, max_nodes):
                 if(track['artists'][x]['name'] in rapper_names[:max_nodes] and track['artists'][y]['name'] in rapper_names[:max_nodes]):
                     G.add_edge(track['artists'][x]['name'], track['artists'][y]['name'])
 
+
+# draw the graph
 pos = nx.spring_layout(G)
 # nodes
 nx.draw_networkx_nodes(G,pos,node_size=700)
-
 # edges
 nx.draw_networkx_edges(G,pos,width=3)
-
 # labels
 nx.draw_networkx_labels(G,pos,font_size=10,font_family='sans-serif')
 
-print 'WE HAVE FINISHED PARSING DATA'
-
-'''
 plt.axis('off')
 plt.savefig("weighted_graph2.png") # save as png
 plt.show() # display
-'''
-
-print nx.connected_components(G)
-print sorted(nx.degree(G).values())
 
 # The following code plots the histogram of degrees
-import plotly.plotly as py
 import plotly.graph_objs as go
+import plotly.plotly as py
 
-import numpy as np
 x = nx.degree(G).values()
 
+# create trace
 trace = go.Histogram(
     x=x,
     histnorm='count',
@@ -73,6 +71,7 @@ trace = go.Histogram(
 )
 data = [trace]
 
+# set layout
 layout = go.Layout(
     title='Degree Distribution of Nodes in Collaboration Graph',
     xaxis=dict(
@@ -93,8 +92,9 @@ layout = go.Layout(
     )
 )
 fig = go.Figure(data=data, layout=layout)
-#plot_url = py.plot(fig, filename='Degree Distribution')
+plot_url = py.plot(fig, filename='Degree Distribution')
 
+# dump the degree data for each artist into a json file
 degrees = {}
 for name in rapper_names:
     degrees[name] = G.degree(name)
