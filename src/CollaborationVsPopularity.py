@@ -51,7 +51,7 @@ for x in range(1, 197):
 import plotly.plotly as py
 import plotly.graph_objs as go
 
-'''
+
 # Create a trace
 trace = go.Scatter(
     x = percentage_collabs,
@@ -88,7 +88,7 @@ layout = go.Layout(
 )
 fig = go.Figure(data=data, layout=layout)
 plot_url = py.plot(fig, filename='Percentage Collabs vs Popularity')
-'''
+
 
 # Create a trace
 trace = go.Scatter(

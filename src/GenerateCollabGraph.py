@@ -1,31 +1,28 @@
+'''
+This code generates the collaboration graph centered at a single artist and includes all other artists that contributed
+to common albums or songs that the artist in question appears on.
+'''
+
 import requests
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# The two artists we try to find the distance between
-parameters1 = {'q': 'Starrah', 'type': 'artist'}
-parameters2 = {'q': 'Drake', 'type': 'artist'}
+# Use the Spotify API to retrieve all the albums of the artist in question
+parameters = {'q': 'Starrah', 'type': 'artist'}
+search = requests.get('https://api.spotify.com/v1/search', params=parameters)
+id = search.json()['artists']['items'][0]['id']
+name = search.json()['artists']['items'][0]['name']
+artist_albums = requests.get('https://api.spotify.com/v1/artists/' + id + '/albums')
 
-search1 = requests.get('https://api.spotify.com/v1/search', params=parameters1)
-id1 = search1.json()['artists']['items'][0]['id']
-name1 = search1.json()['artists']['items'][0]['name']
-
-search2 = requests.get('https://api.spotify.com/v1/search', params=parameters2)
-id2 = search2.json()['artists']['items'][0]['id']
-name2 = search2.json()['artists']['items'][0]['name']
-
-artist1_albums = requests.get('https://api.spotify.com/v1/artists/' + id1 + '/albums')
-artist2_albums = requests.get('https://api.spotify.com/v1/artists/' + id2 + '/albums')
-
+# Initialize the collaboration graph
 G = nx.Graph()
 Edges = []
 
-min_popularity = search1.json()['artists']['items'][0]['popularity'] - 10
-# min_popularity = 0
-print min_popularity
+# Set the minimum popularity (as defined by Spotify's popularity metric) for artists to be included in the graph
+min_popularity = search.json()['artists']['items'][0]['popularity'] - 10
 
-# code to go through all the songs of an artist at current_page
-current_page = artist1_albums
+# code to iterate through the songs of the artist in question
+current_page = artist_albums
 while not current_page == 'none':
     for album in current_page.json()['items']:
         albumID = album['id']
@@ -52,6 +49,7 @@ while not current_page == 'none':
     else:
         current_page = 'none'
 
+# Draw the Graph
 pos = nx.spring_layout(G)
 # nodes
 nx.draw_networkx_nodes(G,pos,node_size=700)
@@ -61,8 +59,6 @@ nx.draw_networkx_edges(G,pos,width=3)
 
 # labels
 nx.draw_networkx_labels(G,pos,font_size=10,font_family='sans-serif')
-
-print 'WE HAVE FINISHED PARSING DATA'
 
 plt.axis('off')
 plt.savefig("weighted_graph2.png") # save as png
